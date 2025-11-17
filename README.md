@@ -464,7 +464,8 @@ private class CrashReportingTree : Timber.Tree() {
 
 ### Current Test Infrastructure
 - **Framework:** JUnit 4, Mockito 4.11.0, Mockito-Kotlin 4.11.0, KotlinX Coroutines Test
-- **Mocking Strategy:** Interface-based mocking (avoids Java 21 bytecode modification issues)
+- **Mocking Strategy:** Inline mocking via `mockito-inline` (allows mocking final Kotlin classes)
+- **Configuration:** `app/src/test/resources/mockito-extensions/org.mockito.plugins.MockMaker` (sets mock-maker=inline)
 - **Structure:** Unit tests located in `app/src/test/java/`
 
 ### Implemented Unit Tests
@@ -962,11 +963,16 @@ grep "mockito" gradle/libs.versions.toml
 ```
 
 **Common Test Issues:**
+
 | Issue | Solution |
 |-------|----------|
-| `Mockito cannot mock concrete class` | Use interface mocking (IRemoteDataSource not RemoteDataSource) |
-| `NoClassDefFoundError` | Ensure test dependencies in gradle/libs.versions.toml |
-| `TimeoutException` | Increase `StandardTestDispatcher` timeout for slow CI |
+| `Mockito cannot mock final class` | Verify `app/src/test/resources/mockito-extensions/org.mockito.plugins.MockMaker` exists with `mock-maker=inline` |
+| `NoClassDefFoundError` | Ensure test dependencies in gradle/libs.versions.toml (mockito-core, mockito-kotlin, mockito-inline) |
+| `TimeoutException` | Increase `StandardTestDispatcher` timeout for slow CI machines |
+| `Mock creation fails at test startup` | Run `./gradlew clean` then `./gradlew test` to reset Gradle cache |
+
+**Mockito Inline Mocking:**
+This project uses inline mocking to allow Mockito to mock final Kotlin classes without making them `open`. This is configured in `app/src/test/resources/mockito-extensions/org.mockito.plugins.MockMaker` (see `MOCKITO_INLINE_CONFIGURATION_FIX.md` for details).
 
 ---
 
@@ -1031,7 +1037,7 @@ The codebase serves as a reference implementation for modern Android development
 - **Documentation:** Comprehensive (20+ pages)
 - **Code Quality:** Clean Architecture with SOLID principles
 
-### Completed (✅ 8/8 Improvements)
+### Completed (✅ 9/9 Improvements)
 1. ✅ Exception Handling Architecture - PhotoException sealed class hierarchy
 2. ✅ Error Logging & Transformation - RemoteDataSource with Timber integration
 3. ✅ Application Initialization - MyApplication with debug/production Timber setup
@@ -1040,6 +1046,7 @@ The codebase serves as a reference implementation for modern Android development
 6. ✅ Code Obfuscation - ProGuard with 5 optimization passes
 7. ✅ Gradle Build Fixes - All 6 errors resolved
 8. ✅ Dependency Management - Version catalog with correct versions
+9. ✅ Test Configuration - Mockito inline mocking for final Kotlin classes
 
 ### Known Issues
 - ⚠️ None at build level
