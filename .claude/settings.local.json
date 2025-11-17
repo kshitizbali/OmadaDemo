@@ -19,7 +19,8 @@
       "Bash(java:*)",
       "Bash(./gradlew:*)",
       "WebFetch(domain:www.flickr.com)",
-      "WebFetch(domain:)"
+      "WebFetch(domain:)",
+      "Bash(chmod:*)"
     ],
     "deny": [],
     "ask": []

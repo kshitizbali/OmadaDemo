@@ -2,7 +2,7 @@
 package com.example.omadademo.di
 
 import com.example.omadademo.data.repository.PhotoRepositoryImpl
-import com.example.omadaplus.domain.repository.PhotoRepository
+import com.example.omadademo.domain.repository.PhotoRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

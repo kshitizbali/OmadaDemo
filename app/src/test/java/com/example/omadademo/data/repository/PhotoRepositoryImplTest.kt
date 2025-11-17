@@ -1,13 +1,15 @@
 package com.example.omadademo.data.repository
 
 import com.example.omadademo.data.mapper.PhotoMapper
-import com.example.omadademo.data.remote.RemoteDataSource
+import com.example.omadademo.data.remote.IRemoteDataSource
 import com.example.omadademo.data.remote.dto.FlickrPhoto
 import com.example.omadademo.data.remote.dto.FlickrPhotosResponse
 import com.example.omadademo.data.remote.dto.PhotosContainer
 import com.example.omadademo.domain.model.Photo
 import com.example.omadademo.domain.model.PhotosResult
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -20,7 +22,7 @@ import org.mockito.kotlin.verify
 class PhotoRepositoryImplTest {
 
     @Mock
-    private lateinit var mockRemoteDataSource: RemoteDataSource
+    private lateinit var mockRemoteDataSource: IRemoteDataSource
 
     @Mock
     private lateinit var mockPhotoMapper: PhotoMapper
@@ -41,20 +43,60 @@ class PhotoRepositoryImplTest {
         val page = 1
         val perPage = 20
         val mockFlickrPhotos = listOf(
-            FlickrPhoto(id = "1", title = "Test Photo 1", owner = "owner1", secret = "secret1", server = "server1", farm = 1),
-            FlickrPhoto(id = "2", title = "Test Photo 2", owner = "owner2", secret = "secret2", server = "server2", farm = 2)
+            FlickrPhoto(
+                id = "1",
+                title = "Test Photo 1",
+                owner = "owner1",
+                secret = "secret1",
+                server = "server1",
+                farm = 1,
+                isPublic = 1
+            ),
+            FlickrPhoto(
+                id = "2",
+                title = "Test Photo 2",
+                owner = "owner2",
+                secret = "secret2",
+                server = "server2",
+                farm = 2,
+                isPublic = 1
+            )
         )
-        val mockResponse = MockPhotosResponse(
-            photosContainer = MockPhotosContainer(photos = mockFlickrPhotos, page = page, pages = 10, total = "100")
+        val mockPhotosContainer = PhotosContainer(
+            page = page,
+            pages = 10,
+            perPage = perPage,
+            total = 100,
+            photos = mockFlickrPhotos
+        )
+        val mockResponse = FlickrPhotosResponse(
+            photosContainer = mockPhotosContainer,
+            stat = "ok"
         )
         val expectedDomainPhotos = listOf(
-            Photo(id = "1", title = "Test Photo 1", owner = "owner1", secret = "secret1", server = "server1", farm = 1),
-            Photo(id = "2", title = "Test Photo 2", owner = "owner2", secret = "secret2", server = "server2", farm = 2)
+            Photo(
+                id = "1",
+                title = "Test Photo 1",
+                owner = "owner1",
+                secret = "secret1",
+                server = "server1",
+                farm = 1,
+                imageUrl = "url1",
+                thumbnailUrl = "thumb1"
+            ),
+            Photo(
+                id = "2",
+                title = "Test Photo 2",
+                owner = "owner2",
+                secret = "secret2",
+                server = "server2",
+                farm = 2,
+                imageUrl = "url2",
+                thumbnailUrl = "thumb2"
+            )
         )
 
         given(mockRemoteDataSource.getRecentPhotos(page, perPage)).willReturn(mockResponse)
-        // Important: Use `any()` for the list if the mapper is complex, or specific list if it's identical.
-        // Here, we assume the mapper converts correctly, so we can check the returned domain photos.
         given(mockPhotoMapper.toDomainList(mockFlickrPhotos)).willReturn(expectedDomainPhotos)
 
         // When
@@ -64,12 +106,10 @@ class PhotoRepositoryImplTest {
         verify(mockRemoteDataSource).getRecentPhotos(page, perPage)
         verify(mockPhotoMapper).toDomainList(mockFlickrPhotos)
 
-        assert(result is PhotosResult.Success)
-        val successResult = result as PhotosResult.Success
-        assert(successResult.photos == expectedDomainPhotos)
-        assert(successResult.currentPage == page)
-        assert(successResult.totalPages == 10)
-        assert(successResult.totalPhotos == "100")
+        assertEquals(expectedDomainPhotos, result.photos)
+        assertEquals(page, result.currentPage)
+        assertEquals(10, result.totalPages)
+        assertEquals(100, result.totalPhotos)
     }
 
     @Test
@@ -84,12 +124,12 @@ class PhotoRepositoryImplTest {
         // When & Then
         try {
             photoRepositoryImpl.getRecentPhotos(page, perPage)
-            assert(false) { "Expected an exception to be thrown" } // Fail test if no exception
+            assertTrue("Expected an exception to be thrown", false)
         } catch (e: Exception) {
-            assert(e === networkException) // Verify the correct exception is propagated
+            assertEquals(networkException, e) // Verify the correct exception is propagated
             verify(mockRemoteDataSource).getRecentPhotos(page, perPage)
             // Ensure mapper is NOT called on error
-            verify(mockPhotoMapper, org.mockito.kotlin.never()).toDomainList(any())
+            verify(mockPhotoMapper, never()).toDomainList(any())
         }
     }
 
@@ -102,13 +142,38 @@ class PhotoRepositoryImplTest {
         val page = 1
         val perPage = 20
         val mockFlickrPhotos = listOf(
-            FlickrPhoto(id = "3", title = "Search Photo 1", owner = "owner3", secret = "secret3", server = "server3", farm = 3)
+            FlickrPhoto(
+                id = "3",
+                title = "Search Photo 1",
+                owner = "owner3",
+                secret = "secret3",
+                server = "server3",
+                farm = 3,
+                isPublic = 1
+            )
         )
-        val mockResponse = MockPhotosResponse(
-            photosContainer = MockPhotosContainer(photos = mockFlickrPhotos, page = page, pages = 5, total = "50")
+        val mockPhotosContainer = PhotosContainer(
+            page = page,
+            pages = 5,
+            perPage = perPage,
+            total = 50,
+            photos = mockFlickrPhotos
+        )
+        val mockResponse = FlickrPhotosResponse(
+            photosContainer = mockPhotosContainer,
+            stat = "ok"
         )
         val expectedDomainPhotos = listOf(
-            Photo(id = "3", title = "Search Photo 1", owner = "owner3", secret = "secret3", server = "server3", farm = 3)
+            Photo(
+                id = "3",
+                title = "Search Photo 1",
+                owner = "owner3",
+                secret = "secret3",
+                server = "server3",
+                farm = 3,
+                imageUrl = "url3",
+                thumbnailUrl = "thumb3"
+            )
         )
 
         given(mockRemoteDataSource.searchPhotos(query, page, perPage)).willReturn(mockResponse)
@@ -121,12 +186,10 @@ class PhotoRepositoryImplTest {
         verify(mockRemoteDataSource).searchPhotos(query, page, perPage)
         verify(mockPhotoMapper).toDomainList(mockFlickrPhotos)
 
-        assert(result is PhotosResult.Success)
-        val successResult = result as PhotosResult.Success
-        assert(successResult.photos == expectedDomainPhotos)
-        assert(successResult.currentPage == page)
-        assert(successResult.totalPages == 5)
-        assert(successResult.totalPhotos == "50")
+        assertEquals(expectedDomainPhotos, result.photos)
+        assertEquals(page, result.currentPage)
+        assertEquals(5, result.totalPages)
+        assertEquals(50, result.totalPhotos)
     }
 
     @Test
@@ -142,15 +205,40 @@ class PhotoRepositoryImplTest {
         // When & Then
         try {
             photoRepositoryImpl.searchPhotos(query, page, perPage)
-            assert(false) { "Expected an exception to be thrown" }
+            assertTrue("Expected an exception to be thrown", false)
         } catch (e: Exception) {
-            assert(e === networkException)
+            assertEquals(networkException, e)
             verify(mockRemoteDataSource).searchPhotos(query, page, perPage)
-            verify(mockPhotoMapper, org.mockito.kotlin.never()).toDomainList(any())
+            verify(mockPhotoMapper, never()).toDomainList(any())
         }
     }
 
-    // --- Additional tests could include:
-    // - Empty lists returned from remoteDataSource
-    // - Edge cases for page/perPage values if they are validated in the repository
+    @Test
+    fun `getRecentPhotos with empty results returns empty list`() = runTest {
+        // Given
+        val page = 1
+        val perPage = 20
+        val mockPhotosContainer = PhotosContainer(
+            page = page,
+            pages = 0,
+            perPage = perPage,
+            total = 0,
+            photos = emptyList()
+        )
+        val mockResponse = FlickrPhotosResponse(
+            photosContainer = mockPhotosContainer,
+            stat = "ok"
+        )
+
+        given(mockRemoteDataSource.getRecentPhotos(page, perPage)).willReturn(mockResponse)
+        given(mockPhotoMapper.toDomainList(emptyList())).willReturn(emptyList())
+
+        // When
+        val result = photoRepositoryImpl.getRecentPhotos(page, perPage)
+
+        // Then
+        assertEquals(emptyList<Photo>(), result.photos)
+        assertEquals(0, result.totalPages)
+        assertEquals(0, result.totalPhotos)
+    }
 }

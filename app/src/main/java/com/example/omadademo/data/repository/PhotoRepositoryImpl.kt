@@ -1,14 +1,14 @@
-// app/src/main/java/com/example/omadaplus/data/repository/PhotoRepositoryImpl.kt
+// app/src/main/java/com/example/omadademo/data/repository/PhotoRepositoryImpl.kt
 package com.example.omadademo.data.repository
 
 import com.example.omadademo.data.mapper.PhotoMapper
-import com.example.omadademo.data.remote.RemoteDataSource
+import com.example.omadademo.data.remote.IRemoteDataSource
 import com.example.omadademo.domain.model.PhotosResult
-import com.example.omadaplus.domain.repository.PhotoRepository
+import com.example.omadademo.domain.repository.PhotoRepository
 import javax.inject.Inject
 
 class PhotoRepositoryImpl @Inject constructor(
-    private val remoteDataSource: RemoteDataSource,
+    private val remoteDataSource: IRemoteDataSource,
     private val photoMapper: PhotoMapper
 ) : PhotoRepository {
     override suspend fun getRecentPhotos(page: Int, perPage: Int): PhotosResult {

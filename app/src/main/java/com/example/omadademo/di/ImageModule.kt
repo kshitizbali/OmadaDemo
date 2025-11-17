@@ -58,6 +58,7 @@ object ImageModule {
                     .maxSizeBytes(50 * 1024 * 1024) // 50MB disk cache
                     .build()
             }
+            .allowHardware(false) // Force software bitmaps for compatibility
             .okHttpClient(okHttpClient)
             .build()
     }

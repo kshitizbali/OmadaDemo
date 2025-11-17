@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.omadademo.presentation.common.PhotoGridState
 import com.example.omadademo.util.PhotoGridConstants
 import com.example.omadademo.domain.usecase.GetRecentPhotosUseCase
-import com.example.omadaplus.domain.usecase.SearchPhotosUseCase
+import com.example.omadademo.domain.usecase.SearchPhotosUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

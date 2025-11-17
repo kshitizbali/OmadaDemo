@@ -53,7 +53,7 @@ class PhotoGridViewModelTest {
     fun `loadRecentPhotos success updates state`() = runTest {
         // Given
         val photos = listOf(Photo("1", "title", "owner", "secret", "server", 1, "url", "thumb"))
-        val successResult = PhotosResult.Success(photos, 1, 2, 1)
+        val successResult = PhotosResult(photos, 1, 2, 1)
         given(getRecentPhotosUseCase(any(), any())).willReturn(successResult)
 
         // When
@@ -89,7 +89,7 @@ class PhotoGridViewModelTest {
         // Given
         val query = "cats"
         val photos = listOf(Photo("1", "cat photo", "owner", "secret", "server", 1, "url", "thumb"))
-        val successResult = PhotosResult.Success(photos, 1, 1, 1)
+        val successResult = PhotosResult(photos, 1, 1, 1)
         given(searchPhotosUseCase(any(), any(), any())).willReturn(successResult)
 
         // When
@@ -141,7 +141,7 @@ class PhotoGridViewModelTest {
         val query = "cats<script>"
         val sanitizedQuery = "catsscript"
         val photos = listOf(Photo("1", "cat photo", "owner", "secret", "server", 1, "url", "thumb"))
-        val successResult = PhotosResult.Success(photos, 1, 1, 1)
+        val successResult = PhotosResult(photos, 1, 1, 1)
         given(searchPhotosUseCase(sanitizedQuery, 1, 20)).willReturn(successResult)
 
         // When
@@ -155,12 +155,12 @@ class PhotoGridViewModelTest {
     fun `loadNextPage for recent photos success`() = runTest {
         // Given
         val initialPhotos = listOf(Photo("1", "title", "owner", "secret", "server", 1, "url", "thumb"))
-        val initialResult = PhotosResult.Success(initialPhotos, 1, 3, 2)
+        val initialResult = PhotosResult(initialPhotos, 1, 3, 2)
         given(getRecentPhotosUseCase(1, 20)).willReturn(initialResult)
         viewModel.loadRecentPhotos() // Initial load
 
         val nextPhotos = listOf(Photo("2", "title2", "owner2", "secret2", "server2", 2, "url2", "thumb2"))
-        val nextResult = PhotosResult.Success(nextPhotos, 2, 3, 2)
+        val nextResult = PhotosResult(nextPhotos, 2, 3, 2)
         given(getRecentPhotosUseCase(2, 20)).willReturn(nextResult)
 
         // When
@@ -177,12 +177,12 @@ class PhotoGridViewModelTest {
         // Given
         val query = "cats"
         val initialPhotos = listOf(Photo("1", "cat photo", "owner", "secret", "server", 1, "url", "thumb"))
-        val initialResult = PhotosResult.Success(initialPhotos, 1, 3, 2)
+        val initialResult = PhotosResult(initialPhotos, 1, 3, 2)
         given(searchPhotosUseCase(query, 1, 20)).willReturn(initialResult)
         viewModel.search(query) // Initial search
 
         val nextPhotos = listOf(Photo("2", "cat photo 2", "owner2", "secret2", "server2", 2, "url2", "thumb2"))
-        val nextResult = PhotosResult.Success(nextPhotos, 2, 3, 2)
+        val nextResult = PhotosResult(nextPhotos, 2, 3, 2)
         given(searchPhotosUseCase(query, 2, 20)).willReturn(nextResult)
 
         // When

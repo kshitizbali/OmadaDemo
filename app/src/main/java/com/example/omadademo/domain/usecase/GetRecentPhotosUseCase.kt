@@ -1,7 +1,7 @@
 package com.example.omadademo.domain.usecase
 
 import com.example.omadademo.domain.model.PhotosResult
-import com.example.omadaplus.domain.repository.PhotoRepository
+import com.example.omadademo.domain.repository.PhotoRepository
 import javax.inject.Inject
 
 class GetRecentPhotosUseCase @Inject constructor(

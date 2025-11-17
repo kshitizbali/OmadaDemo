@@ -30,7 +30,7 @@ class PhotoGridAdapter(
     class PhotoViewHolder(private val binding: ItemPhotoGridBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(photo: Photo, onPhotoClick: (Photo) -> Unit) {
             binding.photoThumbnail.load(photo.thumbnailUrl) {
-                crossfade(true)
+                crossfade(false) // Disable crossfade to avoid drawing cache issues with hardware bitmaps
                 placeholder(R.drawable.ic_photo_placeholder)
                 error(R.drawable.ic_photo_placeholder)
             }

@@ -1,15 +1,11 @@
 package com.example.omadademo.data.mapper
 
+import com.example.omadademo.data.remote.dto.FlickrPhoto
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
-// Assuming FlickrPhoto DTO is available in this package
-// If not, you might need to create a mock DTO or adjust imports.
-
-@RunWith(JUnit4::class)
 class PhotoMapperTest {
 
     private lateinit var photoMapper: PhotoMapper
@@ -29,6 +25,7 @@ class PhotoMapperTest {
             secret = "secret1",
             server = "server1",
             farm = 1,
+            isPublic = 1,
             ownerName = "Test Owner",
             views = "12345",
             dateUpload = "1678886400" // Example Unix timestamp
@@ -38,15 +35,18 @@ class PhotoMapperTest {
         val photo = photoMapper.toDomain(flickrPhoto)
 
         // Then
-        assert(photo.id == "1")
-        assert(photo.title == "Test Title")
-        assert(photo.owner == "owner1")
-        assert(photo.secret == "secret1")
-        assert(photo.server == "server1")
-        assert(photo.farm == 1)
-        assert(photo.ownerName == "Test Owner")
-        assert(photo.views == 12345L)
-        assert(photo.dateUpload == 1678886400L)
+        assertEquals("1", photo.id)
+        assertEquals("Test Title", photo.title)
+        assertEquals("owner1", photo.owner)
+        assertEquals("secret1", photo.secret)
+        assertEquals("server1", photo.server)
+        assertEquals(1, photo.farm)
+        assertEquals("Test Owner", photo.ownerName)
+        assertEquals(12345L, photo.views)
+        assertEquals(1678886400L, photo.dateUpload)
+        // Verify URLs are properly constructed
+        assertEquals("https://live.staticflickr.com/server1/1_secret1.jpg", photo.imageUrl)
+        assertEquals("https://live.staticflickr.com/server1/1_secret1_q.jpg", photo.thumbnailUrl)
     }
 
     @Test
@@ -55,11 +55,11 @@ class PhotoMapperTest {
         val flickrPhotos = listOf(
             FlickrPhoto(
                 id = "1", title = "Title 1", owner = "o1", secret = "s1", server = "sv1", farm = 1,
-                ownerName = "Owner 1", views = "100", dateUpload = "1678886400"
+                isPublic = 1, ownerName = "Owner 1", views = "100", dateUpload = "1678886400"
             ),
             FlickrPhoto(
                 id = "2", title = "Title 2", owner = "o2", secret = "s2", server = "sv2", farm = 2,
-                ownerName = "Owner 2", views = "200", dateUpload = "1678886500"
+                isPublic = 1, ownerName = "Owner 2", views = "200", dateUpload = "1678886500"
             )
         )
 
@@ -67,11 +67,11 @@ class PhotoMapperTest {
         val photos = photoMapper.toDomainList(flickrPhotos)
 
         // Then
-        assert(photos.size == 2)
-        assert(photos[0].id == "1")
-        assert(photos[1].id == "2")
-        assert(photos[0].title == "Title 1")
-        assert(photos[1].title == "Title 2")
+        assertEquals(2, photos.size)
+        assertEquals("1", photos[0].id)
+        assertEquals("2", photos[1].id)
+        assertEquals("Title 1", photos[0].title)
+        assertEquals("Title 2", photos[1].title)
     }
 
     @Test
@@ -84,6 +84,7 @@ class PhotoMapperTest {
             secret = "secret2",
             server = "server2",
             farm = 2,
+            isPublic = 1,
             ownerName = null, // Null ownerName
             views = null,     // Null views
             dateUpload = null // Null dateUpload
@@ -93,8 +94,8 @@ class PhotoMapperTest {
         val photo = photoMapper.toDomain(flickrPhoto)
 
         // Then
-        assert(photo.id == "2")
-        assert(photo.ownerName == null)
+        assertEquals("2", photo.id)
+        assertNull(photo.ownerName)
         assertNull(photo.views)
         assertNull(photo.dateUpload)
     }
@@ -109,6 +110,7 @@ class PhotoMapperTest {
             secret = "secret3",
             server = "server3",
             farm = 3,
+            isPublic = 1,
             ownerName = "Owner 3",
             views = "not a number", // Malformed views
             dateUpload = "another bad string" // Malformed dateUpload
@@ -118,22 +120,38 @@ class PhotoMapperTest {
         val photo = photoMapper.toDomain(flickrPhoto)
 
         // Then
-        assert(photo.id == "3")
+        assertEquals("3", photo.id)
         assertNull(photo.views) // Should be null due to parsing error
         assertNull(photo.dateUpload) // Should be null due to parsing error
     }
-}
 
-// Dummy FlickrPhoto class for testing purposes if it's not available in the test classpath
-// In a real project, this would be imported from data.remote.dto
-data class FlickrPhoto(
-    val id: String,
-    val title: String,
-    val owner: String,
-    val secret: String,
-    val server: String,
-    val farm: Int,
-    val ownerName: String?,
-    val views: String?,
-    val dateUpload: String?
-)
+    @Test
+    fun `toDomain constructs correct image URLs`() {
+        // Given
+        val flickrPhoto = FlickrPhoto(
+            id = "12345",
+            title = "URL Test",
+            owner = "owner",
+            secret = "abc123",
+            server = "server456",
+            farm = 1,
+            isPublic = 1
+        )
+
+        // When
+        val photo = photoMapper.toDomain(flickrPhoto)
+
+        // Then
+        assertEquals("https://live.staticflickr.com/server456/12345_abc123.jpg", photo.imageUrl)
+        assertEquals("https://live.staticflickr.com/server456/12345_abc123_q.jpg", photo.thumbnailUrl)
+    }
+
+    @Test
+    fun `toDomainList handles empty list`() {
+        // When
+        val photos = photoMapper.toDomainList(emptyList())
+
+        // Then
+        assertEquals(0, photos.size)
+    }
+}

@@ -2,17 +2,34 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:layout_margin="4dp"
-    app:cardCornerRadius="8dp"
-    app:elevation="2dp">
+    android:layout_height="220dp"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:elevation="4dp"
+    app:rippleColor="?attr/colorPrimary"
+    android:foreground="?attr/selectableItemBackground">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/photo_thumbnail"
+    <!-- Container for image and overlay -->
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:contentDescription="@string/photo_thumbnail_description"
-        app:shapeAppearance="@style/ShapeAppearance.Material3.SmallComponent" />
+        android:layout_height="match_parent">
+
+        <!-- Photo image -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/photo_thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/photo_thumbnail_description"
+            app:shapeAppearance="@style/ShapeAppearance.Material3.SmallComponent" />
+
+        <!-- Gradient overlay for visual depth -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/gradient_overlay"
+            android:alpha="0.2" />
+
+    </FrameLayout>
 
 </com.google.android.material.card.MaterialCardView>

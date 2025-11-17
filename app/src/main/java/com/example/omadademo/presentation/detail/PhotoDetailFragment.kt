@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -55,6 +56,7 @@ class PhotoDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupToolbar()
+        setupBackNavigation()
         setupImageClickListener()
         setupButtons()
         observePhoto()
@@ -68,11 +70,20 @@ class PhotoDetailFragment : Fragment() {
     }
 
     /**
-     * Configures the collapsing toolbar and back navigation.
+     * Configures the collapsing toolbar styling.
      */
     private fun setupToolbar() {
+        // Toolbar is configured in layout
+    }
+
+    /**
+     * Sets up back navigation using the modern OnBackPressedDispatcher.
+     * This replaces the deprecated Activity.onBackPressed() method.
+     */
+    private fun setupBackNavigation() {
         binding.toolbar.setNavigationOnClickListener {
-            activity?.onBackPressed()
+            // Use OnBackPressedDispatcher for proper back navigation
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
     }
 

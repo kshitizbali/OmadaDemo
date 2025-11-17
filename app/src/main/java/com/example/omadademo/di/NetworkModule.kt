@@ -3,6 +3,8 @@ package com.example.omadademo.di
 import android.content.Context
 import com.example.omadademo.BuildConfig
 import com.example.omadademo.data.remote.FlickrApiService
+import com.example.omadademo.data.remote.IRemoteDataSource
+import com.example.omadademo.data.remote.RemoteDataSource
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -60,4 +62,26 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideApiKey(): String = BuildConfig.FLICKR_API_KEY
+
+    /**
+     * Provides RemoteDataSource as IRemoteDataSource interface.
+     *
+     * This binding allows Hilt to inject the interface type (IRemoteDataSource)
+     * instead of the concrete implementation (RemoteDataSource).
+     *
+     * Benefits:
+     * - Loose coupling: Consumers depend on interface, not implementation
+     * - Testability: Interface is 100% mockable in unit tests
+     * - Flexibility: Easy to swap implementations if needed
+     *
+     * @param flickrApiService API service for making requests
+     * @param apiKey Flickr API key from local.properties
+     * @return RemoteDataSource instance as IRemoteDataSource interface
+     */
+    @Provides
+    @Singleton
+    fun provideRemoteDataSource(
+        flickrApiService: FlickrApiService,
+        apiKey: String
+    ): IRemoteDataSource = RemoteDataSource(flickrApiService, apiKey)
 }

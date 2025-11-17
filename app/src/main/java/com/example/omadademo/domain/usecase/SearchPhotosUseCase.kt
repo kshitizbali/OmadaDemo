@@ -1,8 +1,8 @@
-// app/src/main/java/com/example/omadaplus/domain/usecase/SearchPhotosUseCase.kt
-package com.example.omadaplus.domain.usecase
+// app/src/main/java/com/example/omadademo/domain/usecase/SearchPhotosUseCase.kt
+package com.example.omadademo.domain.usecase
 
 import com.example.omadademo.domain.model.PhotosResult
-import com.example.omadaplus.domain.repository.PhotoRepository
+import com.example.omadademo.domain.repository.PhotoRepository
 import javax.inject.Inject
 
 class SearchPhotosUseCase @Inject constructor(

@@ -1,10 +1,10 @@
 package com.example.omadademo.domain.usecase
 
-import com.example.omadademo.domain.exception.PhotoException
 import com.example.omadademo.domain.model.Photo
 import com.example.omadademo.domain.model.PhotosResult
 import com.example.omadademo.domain.repository.PhotoRepository
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -34,32 +34,33 @@ class GetRecentPhotosUseCaseTest {
             Photo(id = "1", title = "Test Photo 1", owner = "owner1", secret = "secret1", server = "server1", farm = 1, imageUrl = "url1", thumbnailUrl = "thumb1"),
             Photo(id = "2", title = "Test Photo 2", owner = "owner2", secret = "secret2", server = "server2", farm = 2, imageUrl = "url2", thumbnailUrl = "thumb2")
         )
-        val expectedResult = PhotosResult.Success(expectedPhotos, 1, 2, 50)
+        val expectedResult = PhotosResult(expectedPhotos, 1, 2, 50)
         given(photoRepository.getRecentPhotos(page, perPage)).willReturn(expectedResult)
 
         // When
         val result = getRecentPhotosUseCase(page, perPage)
 
         // Then
-        assert(result is PhotosResult.Success)
-        assert((result as PhotosResult.Success).photos == expectedPhotos)
+        assertEquals(expectedPhotos, result.photos)
+        assertEquals(1, result.currentPage)
+        assertEquals(2, result.totalPages)
         verify(photoRepository).getRecentPhotos(page, perPage)
     }
 
     @Test
-    fun `should return error on repository failure`() = runTest {
+    fun `should handle repository call correctly`() = runTest {
         // Given
-        val page = 1
+        val page = 2
         val perPage = 20
-        val expectedError = PhotosResult.Error(PhotoException.NetworkException("Network error"))
-        given(photoRepository.getRecentPhotos(page, perPage)).willReturn(expectedError)
+        val expectedResult = PhotosResult(emptyList(), 2, 5, 0)
+        given(photoRepository.getRecentPhotos(page, perPage)).willReturn(expectedResult)
 
         // When
         val result = getRecentPhotosUseCase(page, perPage)
 
         // Then
-        assert(result is PhotosResult.Error)
-        assert((result as PhotosResult.Error).exception is PhotoException.NetworkException)
+        assertEquals(2, result.currentPage)
+        assertEquals(5, result.totalPages)
         verify(photoRepository).getRecentPhotos(page, perPage)
     }
 
@@ -68,8 +69,8 @@ class GetRecentPhotosUseCaseTest {
         // Given
         val defaultPage = 1
         val defaultPerPage = 20
-        val expectedPhotos = emptyList<Photo>() // Can be any valid list for this test
-        val expectedResult = PhotosResult.Success(expectedPhotos, 1, 2, 0)
+        val expectedPhotos = emptyList<Photo>()
+        val expectedResult = PhotosResult(expectedPhotos, 1, 2, 0)
         given(photoRepository.getRecentPhotos(defaultPage, defaultPerPage)).willReturn(expectedResult)
 
         // When

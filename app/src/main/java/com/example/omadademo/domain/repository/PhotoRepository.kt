@@ -1,5 +1,5 @@
-// app/src/main/java/com/example/omadaplus/domain/repository/PhotoRepository.kt
-package com.example.omadaplus.domain.repository
+// app/src/main/java/com/example/omadademo/domain/repository/PhotoRepository.kt
+package com.example.omadademo.domain.repository
 
 import com.example.omadademo.domain.model.PhotosResult
 

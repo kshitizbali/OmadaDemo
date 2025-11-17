@@ -4,18 +4,27 @@ import com.example.omadademo.data.remote.dto.FlickrPhotosResponse
 import com.example.omadademo.domain.exception.PhotoException
 import timber.log.Timber
 import java.io.IOException
-import javax.inject.Inject
 
 /**
  * Remote data source for Flickr API calls.
  * Handles network communication and error transformation.
  *
  * Converts API exceptions into domain-level PhotoExceptions for proper error handling.
+ *
+ * Implementation Note:
+ * Implements IRemoteDataSource interface for better testability.
+ * Interface-based design allows easy mocking without byte-buddy complexity.
+ *
+ * Dependency Injection:
+ * This class is provided via NetworkModule.provideRemoteDataSource()
+ * rather than using @Inject constructor annotation.
+ * This allows Hilt to inject the IRemoteDataSource interface
+ * instead of the concrete implementation.
  */
-class RemoteDataSource @Inject constructor(
+class RemoteDataSource(
     private val flickrApiService: FlickrApiService,
     private val apiKey: String
-) {
+) : IRemoteDataSource {
     /**
      * Fetches recent photos from Flickr API.
      *
@@ -25,7 +34,7 @@ class RemoteDataSource @Inject constructor(
      * @throws PhotoException.NetworkException if network request fails
      * @throws PhotoException.ParseException if response parsing fails
      */
-    suspend fun getRecentPhotos(page: Int = 1, perPage: Int = 20): FlickrPhotosResponse {
+    override suspend fun getRecentPhotos(page: Int, perPage: Int): FlickrPhotosResponse {
         return try {
             Timber.d("Fetching recent photos: page=$page, perPage=$perPage")
             flickrApiService.getRecentPhotos(
@@ -58,10 +67,10 @@ class RemoteDataSource @Inject constructor(
      * @throws PhotoException.NetworkException if network request fails
      * @throws PhotoException.ParseException if response parsing fails
      */
-    suspend fun searchPhotos(
+    override suspend fun searchPhotos(
         query: String,
-        page: Int = 1,
-        perPage: Int = 20
+        page: Int,
+        perPage: Int
     ): FlickrPhotosResponse {
         return try {
             Timber.d("Searching photos: query=$query, page=$page, perPage=$perPage")
