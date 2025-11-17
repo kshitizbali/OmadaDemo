@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(tree:*)",
+      "Bash(cat:*)",
+      "Bash(xargs grep -l button_search|edit_text_search|search_layout)",
+      "Bash(xargs grep:*)",
+      "Bash(grep:*)",
+      "Bash(./gradlew clean build:*)",
+      "Bash(xargs cat:*)",
+      "Bash(adb logcat:*)",
+      "Bash(/usr/libexec/java_home)",
+      "Bash(/usr/bin/java:*)",
+      "WebFetch(domain:material.io)",
+      "WebFetch(domain:m2.material.io)",
+      "WebFetch(domain:m3.material.io)",
+      "WebSearch",
+      "Bash(java:*)",
+      "Bash(./gradlew:*)",
+      "WebFetch(domain:www.flickr.com)",
+      "WebFetch(domain:)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

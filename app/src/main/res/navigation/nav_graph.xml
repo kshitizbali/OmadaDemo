@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/photoGridFragment">
+
+    <fragment
+        android:id="@+id/photoGridFragment"
+        android:name="com.example.omadademo.presentation.main.PhotoGridFragment"
+        android:label="Flickr Photos">
+        <action
+            android:id="@+id/action_photoGridFragment_to_photoDetailFragment"
+            app:destination="@id/photoDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/photoDetailFragment"
+        android:name="com.example.omadademo.presentation.detail.PhotoDetailFragment"
+        android:label="Photo Details">
+        <argument
+            android:name="photo"
+            app:argType="com.example.omadademo.domain.model.Photo" />
+        <action
+            android:id="@+id/action_photoDetailFragment_to_photoGridFragment"
+            app:destination="@id/photoGridFragment"
+            app:popUpTo="@id/photoGridFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_photoDetailFragment_to_fullScreenImageFragment"
+            app:destination="@id/fullScreenImageFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fullScreenImageFragment"
+        android:name="com.example.omadademo.presentation.fullscreen.FullScreenImageFragment"
+        android:label="Full-Screen Photo">
+        <argument
+            android:name="photo"
+            app:argType="com.example.omadademo.domain.model.Photo" />
+    </fragment>
+</navigation>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Large tablets (720dp and wider) -->
+    <!-- Max height for detail screen image: ~50% of screen -->
+    <dimen name="detail_image_max_height">450dp</dimen>
+
+    <!-- Padding and margins -->
+    <dimen name="padding_small">16dp</dimen>
+    <dimen name="padding_medium">24dp</dimen>
+    <dimen name="padding_large">40dp</dimen>
+</resources>

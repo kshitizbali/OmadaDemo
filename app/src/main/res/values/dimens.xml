@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Small phones (up to 5 inches) -->
+    <!-- Max height for detail screen image: ~40% of screen -->
+    <dimen name="detail_image_max_height">280dp</dimen>
+
+    <!-- Padding and margins -->
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_medium">16dp</dimen>
+    <dimen name="padding_large">24dp</dimen>
+</resources>
