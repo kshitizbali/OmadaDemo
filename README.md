@@ -14,11 +14,17 @@ A professional-grade Android application showcasing modern architectural pattern
 ### Key Features
 
 ✅ **Browse Recent Photos** - Discover the latest photos from Flickr.
+
 ✅ **Powerful Search** - Find photos by keyword with validation and sanitization.
+
 ✅ **Infinite Pagination** - Seamlessly load more photos as you scroll.
+
 ✅ **Photo Details** - View enlarged photos with correct aspect ratios.
+
 ✅ **Smart Caching** - Intelligent memory and disk caching for fast loading (via Coil).
+
 ✅ **Production Ready** - Code obfuscation, HTTPS enforcement, and proper error handling.
+
 ✅ **Comprehensive Logging** - Debug-friendly logging for development, crash reporting prepared for production.
 
 ---
